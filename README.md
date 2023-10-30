@@ -1,5 +1,5 @@
 # k-water-mlops
-
+<img src = 'images/k-water_logo.png' alt = 'Drawing' style = 'width: 200px;'/>
 한국수자원공사(k-water)에서 개발한 AI 학습용 예제를 바탕으로 파이프라인을 구성
 - 외부 데이터 유입 등으로 측정 데이터 변화 시 변화하는 데이터에 맞춰 주기적으로 알맞은 학습모델 개발 등 지속적 관리 필요
 - 클라우드 인프라에서 워크로드를 수행하기 위해
