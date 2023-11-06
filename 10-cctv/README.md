@@ -53,7 +53,7 @@ Detectron2의 Mask R-CNN을 이용한 Instance Segmentation
         
 2. 모델 생성 및 학습
     
-    <img src = 'image/Mask_R-CNN_구조.png' alt = 'Drawing' style = 'width: 600px;'/>
+    <img src = '/images/Mask_R-CNN_구조.png' alt = 'Drawing' style = 'width: 600px;'/>
     
     (이미지 출처) https://<hi>[techblog-history-younghunjo1.tistory.com/193](http://techblog-history-younghunjo1.tistory.com/193)
     
