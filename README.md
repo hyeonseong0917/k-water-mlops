@@ -7,3 +7,4 @@
 
 ## 학습 예제
 10. 인공지능 기반 CCTV 영상분석을 통한 도시침수 감지
+    https://github.com/hyeonseong0917/k-water-mlops/tree/main/10-cctv
