@@ -154,7 +154,7 @@ Detectron2의 Mask R-CNN을 이용한 Instance Segmentation
     1. 물 영역 면적 추출
         - 물 영역을 흑백으로 표시하는 이진화 작업 수행
             
-            <img src = '/images/water_area_visualization.png' alt = 'Drawing' style = 'width: 600px;'/>
+            <img src = 'images/water_area_visualization.png' alt = 'Drawing' style = 'width: 600px;'/>
             
         - 범용 모폴로지 연산을 이용해 닫기 연산을 수행
         - 외곽선을 찾고 꼭짓점 좌표만 반환
