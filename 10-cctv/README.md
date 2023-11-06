@@ -1,4 +1,4 @@
-# #10 인공지능 기반 CCTV 영상분석을 통한 도시침수 감지
+# #10 인공지능 기반 CCTV 영상분석을 통한 도시침수 감지2
 
 분석 주제 및 목표: CCTV영상에서 침수 영역을 추출하는 물 객체 감지 및 영역 추출 모델 생성
 
@@ -53,7 +53,7 @@ Detectron2의 Mask R-CNN을 이용한 Instance Segmentation
         
 2. 모델 생성 및 학습
     
-    <img src = '/images/Mask_R-CNN_구조.png' alt = 'Drawing' style = 'width: 600px;'/>
+    <img src = 'images/Mask_R-CNN_구조.png' alt = 'Drawing' style = 'width: 600px;'/>
     
     (이미지 출처) https://<hi>[techblog-history-younghunjo1.tistory.com/193](http://techblog-history-younghunjo1.tistory.com/193)
     
@@ -67,26 +67,45 @@ Detectron2의 Mask R-CNN을 이용한 Instance Segmentation
     
     (2) 모델 및 학습에 필요한 하이퍼파라미터 설정
     
-    - get_cfg: Detectron2에서 사용되는 설정 파일을 가져와 Node를 생성
-    - merge_from_file(model_zoo.get_config_file(”COCO 인스턴스 세그멘테이션을 위한 파일”))
+    - get_cfg: Detectron2에서 사용되는 설정 파일을 가져와 CfgNode를 생성
+        
+        ```python
+        cfg=get_cfg()
+        ```
+        
+    - cfg.merge_from_file(model_zoo.get_config_file(”COCO 데이터셋으로 사전학습된 Mask-RCNN 모델의 가중치 경로”))
+        
+        ```python
+        cfg.merge_from_file(model_zoo.get_config_file('COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml'))
+        ```
+        
         - model_zoo: 사전 학습된 모델들을 모아놓은 저장소
         - get_config_file(”설정 파일”): 설정 파일의 경로를 반환
         - 설정 파일에 저장된 설정을 현재 설정에 병합
-    - DATASETS.TRAIN: Detectron2의 데이터셋에 존재하는 train_data의 데이터셋 이름을 tuple 형태로 지정
-    - DATALOADER.NUM_WORKERS
+    - cfg.DATASETS.TRAIN=: Detectron2의 데이터셋에 존재하는 train_data의 데이터셋 이름을 tuple 형태로 지정
+    - cfg.DATALOADER.NUM_WORKERS=
         - 데이터로더가 사용하는 CPU 코어의 수 제어
-    - MODEL.WEIGHTS
+        - 본 실험에서는 2로 설정
+    - cfg.MODEL.WEIGHTS=model_zoo.get_checkpoint_url(”COCO 데이터셋으로 사전학습된 Mask-RCNN 모델의 가중치 경로”)
         - get_checkpoint_url(’설정 yaml 파일 디렉토리’)사전 학습된 모델 MASK R-CNN 모델의 가중치를 가져옴
-    - SOLVER.IMS_PER_BATCH
+        
+        ```python
+        cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url('COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml')
+        ```
+        
+    - cfg.SOLVER.IMS_PER_BATCH=
         - 모델 학습 중 사용할 이미지 배치 크기로, 더 큰 배치는 더 빠른 학습을 가능하게 하지만  GPU 메모리에 맞게 설정해야함
-    - SOLVER.BASE_LR
+        - 본 실험에서는 2로 설정
+    - cfg.SOLVER.BASE_LR=
         - 모델의 가중치를 업데이트하는 속도인 학습률을 설정하는 하이퍼파라미터로 BASE_LR을 통해 초기 학습률을 지정
-    - SOLVER.MAX_ITER
+        - 본 실험에서는 0.00025로 설정
+    - cfg.SOLVER.MAX_ITER=
         - 모델이 학습을 언제 중지해야 하는지를 지정하는 값
         - 모델 학습의 최대 반복 횟수: 모델이 데이터 셋을 몇 번 반복하고 가중치를 업데이트 할 지를 지정
         - 값이 크면 학습 데이터를 더 잘 이해하고 일반화 할 수 있는 가능성이 높아지지만 과적합되어 검증 데이터에서 나쁜 성능을 보일 가능성 높음(*)
         - 값이 작다면 모델이 학습 데이터에 잘 적합되지 못하는 underfitting이 발생하고 일반화 능력을 감소시켜 작은 데이터셋에서 과적합이 발생할 수 있음
-    - MODEL.ROI_HEADS.NUM_CLASSES
+        - 본 실험에서는 2000으로 설정
+    - cfg.MODEL.ROI_HEADS.NUM_CLASSES=
         - 모델이 분류해야 하는 클래스 개수. 본 과제에서는 water class의  탐지만을 목표로 하므로 1
     
     (3) 모델 학습
@@ -126,9 +145,17 @@ Detectron2의 Mask R-CNN을 이용한 Instance Segmentation
         ```
         
     - DefaultPredictor(cfg): test 데이터 셋에 대해 객체 검출 예측을 수행하고 결과를 출력
+        
+        ```python
+        predictor = DefaultPredictor(cfg)
+        ```
+        
     
     1. 물 영역 면적 추출
         - 물 영역을 흑백으로 표시하는 이진화 작업 수행
+            
+            <img src = '/images/water_area_visualization.png' alt = 'Drawing' style = 'width: 600px;'/>
+            
         - 범용 모폴로지 연산을 이용해 닫기 연산을 수행
         - 외곽선을 찾고 꼭짓점 좌표만 반환
         - 외곽선을 이미지에 그리기
