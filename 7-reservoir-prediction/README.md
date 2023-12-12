@@ -6,7 +6,7 @@
 핵심 아이디어: 논산배수지의 1주일 전까지의 데이터를 이용해 1주일 전의 데이터를 예측하는 모델을 Docker와 FastAPI를 이용해 Serving하고 Monitoring하는
 파이프라인 구축
 
-<img src = 'images/architectur.png' alt = 'Drawing'/>
+<img src = 'images/architecture.png' alt = 'Drawing'/>
 
 ## 디렉토리 구조
 
