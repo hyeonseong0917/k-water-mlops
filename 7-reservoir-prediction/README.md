@@ -33,7 +33,7 @@
     전처리 및 표준화
     
     ```python
-    train_len = math.ceil(len(target_col_values) * 0.8)  # 29810
+        train_len = math.ceil(len(target_col_values) * 0.8)  # 29810
         # 8:2로 데이터 분할
         train_df = target_col_values[0:train_len, :]  # 0~29809
         test_df = target_col_values[(train_len-168):, :]  # 24시간 * 7일 
