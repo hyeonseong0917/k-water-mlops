@@ -6,5 +6,5 @@
 - CI/CD 파이프라인을 통해 통합 및 테스트 단계와 배포 단계에 모니터링 및 자동화를 도입하여 개발 프로세스 개선
 
 ## 학습 예제
-10. 인공지능 기반 CCTV 영상분석을 통한 도시침수 감지
-    https://github.com/hyeonseong0917/k-water-mlops/tree/main/10-cctv
+7. 인공지능 기반 CCTV 영상분석을 통한 도시침수 감지
+    [https://github.com/hyeonseong0917/k-water-mlops/tree/main/10-cctv](https://github.com/hyeonseong0917/k-water-mlops/tree/main/7-reservoir-prediction)https://github.com/hyeonseong0917/k-water-mlops/tree/main/7-reservoir-prediction
