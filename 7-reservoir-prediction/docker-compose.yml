@@ -3,7 +3,7 @@ version: "3"
 services:
   web:
     build: .
-    container_name: js-fastapi-monitoring
+    container_name: reservoir-prediction
     volumes:
       - .:/code
     ports:

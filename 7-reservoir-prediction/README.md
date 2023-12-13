@@ -12,6 +12,7 @@
 - app
     - api.py
     - schemas.py
+    - monitoring.py
 - artifacts
     - model.joblib
     - scaler.joblib
@@ -145,7 +146,7 @@
         services:
           web:
             build: .
-            container_name: js-fastapi-monitoring
+            container_name: reservoir-prediction
             volumes:
               - .:/code
             ports:
@@ -184,7 +185,7 @@
                 }
                 stage("Update model") {
                     steps {
-                        sh "docker exec -i 7-reservoir-prediction python train.py"
+                        sh "docker exec -i reservoir-prediction python train.py"
                     }
                 }
             }
