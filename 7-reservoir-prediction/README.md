@@ -12,6 +12,7 @@
 - app
     - api.py
     - schemas.py
+    - monitoring.py
 - artifacts
     - model.joblib
     - scaler.joblib
