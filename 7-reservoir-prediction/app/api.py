@@ -7,6 +7,8 @@ import json
 from train import request_json_data
 from fastapi.responses import JSONResponse
 import requests
+import pandas as pd
+import math
 # from .monitoring import instrumentator
 
 ROOT_DIR = Path(__file__).parent.parent
@@ -43,21 +45,58 @@ def transform():
 # sample=Reservoir: return값으로 나오는 model의 데이터 형태: 일주일 동안 한시간 간격의 유출유량 데이터 (:29642,168,1) input data역할
 # flow: 전체 데이터에서 1시간 전까지의 유출유량 데이터 (29642,)
 # sample: request의 데이터 모델.. request에 유출유량 데이터를 넣으면 되나? jsonify된?
-@app.post("/predict", response_model=Flow)
-def predict(response: Response, sample: Reservoir):
-    return {"status": "success"}
-    # sample_dict = sample
-    print(sample)
+# total: 37261?
+@app.post("/predict")
+def predict(sample: Reservoir):
+    sample_list=list(sample.data.values())
+    sample_np=np.array(sample_list)
+ 
+    two_dim_array_reshape = np.array([sample_np])
+
+    target_col_values = two_dim_array_reshape.reshape(37262,1)
+    train_len = math.ceil(len(target_col_values) * 0.8)  # 29810
+
+    # 8:2로 데이터 분할
+    train_df = target_col_values[0:train_len, :]  # 0~29809
+    test_df = target_col_values[(train_len-168):, :]  # 24시간 * 7일
     
-    prediction_data = model.predict(sample)
-    # print(prediction_data)
-    # return 123
-    # features = np.array([sample_dict[f] for f in feature_names]).reshape(-1, 1)
-    # reshaped_features = features.reshape((features.shape[0], 168, 1))
-    # features_scaled = scaler.transform(features)
-    # prediction = model.predict(reshaped_features)
+    train_df = target_col_values[0:train_len, :]  # 0~29809
+    test_df = target_col_values[(train_len-168):, :]  # 24시간 * 7일 
+    train_min = np.min(train_df)
+    train_max = np.max(train_df)
+    scaled_train = (train_df-train_min) / (train_max-train_min)  
+    scaled_test = (test_df-train_min) / (train_max-train_min)  
+    
+    # x_train, y_trian - lag 적용
+    # append(데이터): list에 데이터를 추가
+    x_train = []
+    y_train = []
+    for i in range(168, train_len):
+        x_train.append(scaled_train[(i-168):i, 0])
+        y_train.append(scaled_train[i, 0])
+    # x_test, y_test - lag 적용
+    #len(데이터): 데이터의 길이(데이터프레임은 행의수, 리스트는 데이터의 수)를 출력
+    x_test = []
+    y_test = scaled_test[168:, :]
+    for i in range(168, len(test_df)):
+        x_test.append(scaled_test[(i-168):i, 0])
+    # 8:2로 데이터 분할
+    train_df = target_col_values[0:train_len, :]  # 0~29809
+    test_df = target_col_values[(train_len-168):, :]  # 24시간 * 7일 
+    train_x_array = np.array(x_train)
+    train_y_array = np.array(y_train)
+    test_x_array = np.array(x_test)
+    # lstm학습하기 위해 reshape
+
+    # reshape(): array의 차원을 변형
+    train_x_array = np.reshape(train_x_array, (train_x_array.shape[0], train_x_array.shape[1], 1))  
+    test_x_array = np.reshape(test_x_array, (test_x_array.shape[0], test_x_array.shape[1], 1)) 
+    
+    prediction_data = model.predict(train_x_array)
+    reshaped_array = prediction_data.reshape(29642)
+    input_data={'data': reshaped_array}
     # response.headers["X-model-score"] = str(prediction_data)
-    # return Flow(prediction_data)
+    return Flow(**input_data)
 
 
 @app.get("/healthcheck")
