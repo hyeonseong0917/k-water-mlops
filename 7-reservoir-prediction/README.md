@@ -24,6 +24,8 @@
 ## 1. 데이터 전처리 및 학습
 
 - 훈련 코드 생성(lstm layer 한 개)
+    - 데이터 형태
+    <img src = 'images/data.png' alt = 'Drawing'/>    
     
     [train.py]
     
