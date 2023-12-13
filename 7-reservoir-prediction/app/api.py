@@ -15,7 +15,7 @@ ROOT_DIR = Path(__file__).parent.parent
 
 app = FastAPI()
 # scaler = load(ROOT_DIR / "artifacts/scaler.joblib")
-model = load(ROOT_DIR / "artifacts/model.joblib")
+model = load(ROOT_DIR / "app/artifacts/model.joblib")
 
 
 @app.get("/")

@@ -123,7 +123,18 @@
     [api.py]
     
     - 패키지, model 로드, 기본 api 생성
-    
+    - request body:
+        ```javascript
+            {
+                data:{
+                    "0": 728.0625,
+                    "1": 637.3125,
+                    ...
+                    "37261": 865.875
+                }
+            }
+        ```
+
     ```python
     app = FastAPI()
     # scaler = load(ROOT_DIR / "artifacts/scaler.joblib")
