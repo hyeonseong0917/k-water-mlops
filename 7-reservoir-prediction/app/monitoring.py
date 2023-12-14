@@ -80,7 +80,7 @@ def regression_model_output(
 
     return instrumentation
 
-buckets = (*np.arange(0, 1.1, 00.5).tolist(), float("inf"))
+buckets = (*np.arange(0, 1.1, 0.05).tolist(), float("inf"))
 instrumentator.add(
     regression_model_output(metric_namespace=NAMESPACE, metric_subsystem=SUBSYSTEM, buckets=buckets)
 )

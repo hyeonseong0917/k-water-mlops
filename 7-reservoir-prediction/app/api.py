@@ -47,8 +47,8 @@ def transform():
 # flow: 전체 데이터에서 1시간 전까지의 유출유량 데이터 (29642,)
 # sample: request의 데이터 모델.. request에 유출유량 데이터를 넣으면 되나? jsonify된?
 # total: 37261?
-@app.post("/predict")
-def predict(sample: Reservoir):
+@app.post("/predict",response_model=Flow)
+def predict(response: Response, sample: Reservoir):
     sample_list=list(sample.data.values())
     sample_np=np.array(sample_list)
  
