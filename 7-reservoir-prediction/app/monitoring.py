@@ -5,6 +5,7 @@ import numpy as np
 from prometheus_client import Histogram
 from prometheus_fastapi_instrumentator import Instrumentator, metrics
 from prometheus_fastapi_instrumentator.metrics import Info
+import json
 
 NAMESPACE = os.environ.get("METRICS_NAMESPACE", "fastapi")
 SUBSYSTEM = os.environ.get("METRICS_SUBSYSTEM", "model")
@@ -62,7 +63,7 @@ def regression_model_output(
     metric_doc: str = "Output value of regression model",
     metric_namespace: str = "",
     metric_subsystem: str = "",
-     buckets=(*np.arange(0, 1.1, 0.05).tolist(), float("inf")),
+     buckets=(*np.arange(0, 1.1, 0.0001).tolist(), float("inf")),
 ) -> Callable[[Info], None]:
     METRIC = Histogram(
         metric_name,
@@ -74,13 +75,33 @@ def regression_model_output(
 
     def instrumentation(info: Info) -> None:
         if info.modified_handler == "/predict":
-            predicted_quality = info.response.headers.get("X-model-score")
-            if predicted_quality:
-                METRIC.observe(float(predicted_quality))
+            # predicted_quality = info.response.headers.get("X-model-score")
+            # if predicted_quality:
+            #     METRIC.observe(float(predicted_quality))
+            status_code = info.response.status_code
+            content = info.response.content
+            
+    
+            # 이 정보를 사용하여 원하는 로직을 수행할 수 있습니다.
+            if status_code == 200 and content:
+                # content를 가공하거나 원하는 작업을 수행합니다.
+                # 예를 들어, content를 JSON으로 파싱하여 값을 얻거나 다른 처리를 수행할 수 있습니다.
+                try:
+                    json_data = json.loads(content)
+                    predicted_quality = json_data.get("data")
+                    if predicted_quality:
+                        METRIC.observe(float(predicted_quality))
+                except json.JSONDecodeError as e:
+                    # JSON 디코딩 오류 처리
+                    print(f"Error decoding JSON: {e}")
 
     return instrumentation
 
-buckets = (*np.arange(0, 1.1, 0.05).tolist(), float("inf"))
+buckets = (*np.arange(0, 1.1, 0.0001).tolist(), float("inf"))
+# instrumentator.add(
+#     regression_model_output(metric_namespace=NAMESPACE, metric_subsystem=SUBSYSTEM, buckets=buckets)
+# )
+# buckets = np.arange(0, 1.1, 0.01).tolist() + [float("inf")]
 instrumentator.add(
     regression_model_output(metric_namespace=NAMESPACE, metric_subsystem=SUBSYSTEM, buckets=buckets)
 )

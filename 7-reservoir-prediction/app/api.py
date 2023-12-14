@@ -4,17 +4,17 @@ from fastapi import FastAPI, Response
 from joblib import load
 from schemas import Reservoir, Flow
 import json
-from train import request_json_data
+from train import request_json_data, find_ranges, get_outlier, prepare_dataset
 from fastapi.responses import JSONResponse
 import requests
 import pandas as pd
 import math
-from .monitoring import instrumentator
+# from .monitoring import instrumentator
 
 ROOT_DIR = Path(__file__).parent.parent
 
 app = FastAPI()
-instrumentator.instrument(app).expose(app, include_in_schema=False, should_gzip=True)
+# instrumentator.instrument(app).expose(app, include_in_schema=False, should_gzip=True)
 # scaler = load(ROOT_DIR / "artifacts/scaler.joblib")
 model = load(ROOT_DIR / "app/artifacts/model.joblib")
 
@@ -22,6 +22,7 @@ model = load(ROOT_DIR / "app/artifacts/model.joblib")
 @app.get("/")
 def root():
     return "Flow"
+    
 
 @app.get("/transform")
 def transform():
@@ -94,9 +95,14 @@ def predict(response: Response, sample: Reservoir):
     test_x_array = np.reshape(test_x_array, (test_x_array.shape[0], test_x_array.shape[1], 1)) 
     
     prediction_data = model.predict(train_x_array)
-    reshaped_array = prediction_data.reshape(29642)
+    rounded_prediction_data = np.round(prediction_data, decimals=4)
+    # print(rounded_prediction_data)
+    reshaped_array = rounded_prediction_data.reshape(29642)
+    
     input_data={'data': reshaped_array}
-    response.headers["X-model-score"] = str(prediction_data)
+    print(Flow(**input_data))
+    # response.headers["X-model-score"] = json.dumps(prediction_data.tolist())
+    # print(response.headers["X-model-score"])
     return Flow(**input_data)
 
 
