@@ -1,5 +1,13 @@
-- job_name: 'jenkins'
-  metrics_path: /prometheus/
+# prometheus.yml
+
+global:
+  scrape_interval:     15s
+  evaluation_interval: 30s
+  # scrape_timeout is set to the global default (10s).
+
+scrape_configs:
+- job_name: fastapi
+  honor_labels: true
   static_configs:
-    - targets:
-      - localhost:8080
+  - targets:
+    - 107.21.70.69:5000  # metrics from model

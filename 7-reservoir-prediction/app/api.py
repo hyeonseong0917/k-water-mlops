@@ -9,11 +9,12 @@ from fastapi.responses import JSONResponse
 import requests
 import pandas as pd
 import math
-# from .monitoring import instrumentator
+from .monitoring import instrumentator
 
 ROOT_DIR = Path(__file__).parent.parent
 
 app = FastAPI()
+instrumentator.instrument(app).expose(app, include_in_schema=False, should_gzip=True)
 # scaler = load(ROOT_DIR / "artifacts/scaler.joblib")
 model = load(ROOT_DIR / "app/artifacts/model.joblib")
 
@@ -95,7 +96,7 @@ def predict(sample: Reservoir):
     prediction_data = model.predict(train_x_array)
     reshaped_array = prediction_data.reshape(29642)
     input_data={'data': reshaped_array}
-    # response.headers["X-model-score"] = str(prediction_data)
+    response.headers["X-model-score"] = str(prediction_data)
     return Flow(**input_data)
 
 
