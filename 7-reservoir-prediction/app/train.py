@@ -4,7 +4,6 @@
 # 'TF_CPP_MIN_LOG_LEVEL': 텐서플로에서 ERROR, INFO, WARNING 로그를 출력하지 않는 방법
 # 0: 모든 메세지 출력, 1:info메세지만 미출력, 2:info, warning메세지 미출력 , 3: info, warning, error 메세지 미출력
 import os
-from tkinter.tix import Y_REGION
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 import warnings
@@ -15,9 +14,6 @@ import pandas as pd
 import numpy as np 
 from datetime import datetime  
 import logging
-import plotly.express as px 
-import plotly.graph_objects as go 
-import plotly.offline as pyo  
 from keras.models import Sequential 
 from keras.layers import LSTM, Dense  
 from sklearn.metrics import mean_absolute_error, mean_squared_error 
