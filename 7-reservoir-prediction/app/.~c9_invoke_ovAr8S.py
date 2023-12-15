@@ -81,16 +81,15 @@ def regression_model_output(
             # if predicted_quality:
             #     METRIC.observe(float(predicted_quality))
             status_code = info.response.status_code
-            print(info.re)
+            print(info.response)
             content = None
             
-            while content is None:
-                print(content)    
-                try:
-                    content = json.loads(info.response.body.decode("utf-8"))
-                except Exception as e:
-                    # print(e)
-                    content=None    
+            try:
+                content = json.loads(info.response.body.decode("utf-8"))
+            except Exception as e:
+                # print(e)
+                content=None    
+                
             
             # 이 정보를 사용하여 원하는 로직을 수행할 수 있습니다.
             print("why")
