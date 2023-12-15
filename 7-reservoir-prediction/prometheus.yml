@@ -10,4 +10,4 @@ scrape_configs:
   honor_labels: true
   static_configs:
   - targets:
-    - 3.209.10.247:5000  # metrics from model
+    - 3.236.249.63:5000  # metrics from model

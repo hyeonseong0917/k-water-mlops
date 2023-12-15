@@ -13,7 +13,7 @@ class ReservoirPrediction(HttpUser):
     @task(10)
     def prediction(self):
         # record = random.choice(dataset).copy()
-        response=requests.get("http://3.209.10.247:5000/transform")
+        response=requests.get("http://3.236.249.63:5000/transform")
         json_response = response.json()
         json_data=json_response["data"]
         new_json_data={"data": json_data}
