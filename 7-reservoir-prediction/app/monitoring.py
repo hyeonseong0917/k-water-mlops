@@ -63,7 +63,7 @@ def regression_model_output(
     metric_doc: str = "Output value of regression model",
     metric_namespace: str = "",
     metric_subsystem: str = "",
-     buckets=(*np.arange(0, 1.1, 0.0001).tolist(), float("inf")),
+     buckets=(*np.arange(0, 1.0001, 0.0001).tolist(), float("inf")),
 ) -> Callable[[Info], None]:
     METRIC = Histogram(
         metric_name,
@@ -79,9 +79,12 @@ def regression_model_output(
             # if predicted_quality:
             #     METRIC.observe(float(predicted_quality))
             status_code = info.response.status_code
-            content = info.response.content
             
-    
+            try:
+                # 예외가 발생할 수 있는 코드 블록
+                content = info.response.text
+            except:
+                content=None
             # 이 정보를 사용하여 원하는 로직을 수행할 수 있습니다.
             if status_code == 200 and content:
                 # content를 가공하거나 원하는 작업을 수행합니다.
@@ -97,7 +100,7 @@ def regression_model_output(
 
     return instrumentation
 
-buckets = (*np.arange(0, 1.1, 0.0001).tolist(), float("inf"))
+buckets = (*np.arange(0, 1.0001, 0.0001).tolist(), float("inf"))
 # instrumentator.add(
 #     regression_model_output(metric_namespace=NAMESPACE, metric_subsystem=SUBSYSTEM, buckets=buckets)
 # )

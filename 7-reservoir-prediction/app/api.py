@@ -9,12 +9,12 @@ from fastapi.responses import JSONResponse
 import requests
 import pandas as pd
 import math
-# from .monitoring import instrumentator
+from .monitoring import instrumentator
 
 ROOT_DIR = Path(__file__).parent.parent
 
 app = FastAPI()
-# instrumentator.instrument(app).expose(app, include_in_schema=False, should_gzip=True)
+instrumentator.instrument(app).expose(app, include_in_schema=False, should_gzip=True)
 # scaler = load(ROOT_DIR / "artifacts/scaler.joblib")
 model = load(ROOT_DIR / "app/artifacts/model.joblib")
 
@@ -48,7 +48,7 @@ def transform():
 # flow: 전체 데이터에서 1시간 전까지의 유출유량 데이터 (29642,)
 # sample: request의 데이터 모델.. request에 유출유량 데이터를 넣으면 되나? jsonify된?
 # total: 37261?
-@app.post("/predict",response_model=Flow)
+@app.post("/predict",  response_model=Flow)
 def predict(response: Response, sample: Reservoir):
     sample_list=list(sample.data.values())
     sample_np=np.array(sample_list)
@@ -96,14 +96,21 @@ def predict(response: Response, sample: Reservoir):
     
     prediction_data = model.predict(train_x_array)
     rounded_prediction_data = np.round(prediction_data, decimals=4)
-    # print(rounded_prediction_data)
     reshaped_array = rounded_prediction_data.reshape(29642)
-    
-    input_data={'data': reshaped_array}
-    print(Flow(**input_data))
+    new_list=reshaped_array.tolist()
+    rounded_list = [round(num, 4) for num in new_list]
+    input_data={'data': rounded_list}
+    print(input_data)
+    # print(input_data)
+    # print(type(reshaped_array))
     # response.headers["X-model-score"] = json.dumps(prediction_data.tolist())
     # print(response.headers["X-model-score"])
     return Flow(**input_data)
+    # return Flow(data=reshaped_array)
+    # response_data = {'status': 'success', 'data': {'key': 'value'}}
+
+    # JSONResponse를 사용하여 응답 반환
+    # return JSONResponse(content=input_data)
 
 
 @app.get("/healthcheck")
